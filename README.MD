@@ -34,6 +34,7 @@ pip install -r requirements.txt
 TELEGRAM_TOKEN_API=TU_BOT_API_KEY
 API_NEW_TOKEN=API_KEY_DE_NEWS_API
 ```
+5. Ejecuta el archivo `main.py` para iniciar el bot.
 
 ## ¿Cómo funciona?
 > El bot se conecta a la API de noticias así mismo obtiene los titulares más recientes y envía los titulares a través de Telegram.
