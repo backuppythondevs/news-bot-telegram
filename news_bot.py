@@ -2,6 +2,9 @@ from base import BotTelegram
 from telegram import (InlineKeyboardButton, InlineKeyboardMarkup)
 from BaseNewsAPI import BaseNewsAPI
 from time import sleep
+import datetime
+import locale
+
 
 
 class BotTelegramNews(BotTelegram, BaseNewsAPI):
@@ -9,6 +12,7 @@ class BotTelegramNews(BotTelegram, BaseNewsAPI):
         BotTelegram.__init__(self, nombre, token)
         BaseNewsAPI.__init__(self, api_key)
 
+        locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
         self.case = {
             'business': 'negocios',
             'entertainment': 'entretenimiento',
@@ -48,20 +52,24 @@ class BotTelegramNews(BotTelegram, BaseNewsAPI):
         query = update.callback_query
         query.answer()
 
-        self.enviar_mensaje(context.bot, update.effective_user.id, f"Has seleccionado la categoría *_{self.case[query.data]}_*", parse_mode="Markdown")
+        self.enviar_mensaje(context.bot, update.effective_user.id, f"Has seleccionado la categoría {self.case[query.data]}")
         news = self.getArticles(query.data)
         self.sendArticles(update, context, news)
-        self.enviar_mensaje(context.bot, update.effective_user.id, "Pulsa un botón para ver más noticias", reply_markup=self.reply_markup)
+        self.enviar_mensaje(context.bot, update.effective_user.id,
+         (f"Pulsa un botón para ver más noticias 📰 de hoy {datetime.date.today().day}  de {datetime.date.today().strftime('%B')} de {datetime.date.today().year}."),
+           reply_markup=self.reply_markup)
                 
         
     def getMessage(self, article):
-        return f"""📰 *{self.getTitle(article)}* \n _{self.getDescription(article)}_ \n {self.getUrl(article)}\n {self.getImage(article)}\n *©️ Autor:* {self.getAuthor(article)} \n *📅 Fecha:* {self.getPublished(article)}"""
+        return f"""📰 {self.getTitle(article)}\n{self.getDescription(article)}\n{self.getUrl(article)}\n{self.getImage(article)}\n\n©️ Autor: {self.getAuthor(article)}\n📅 Fecha: {self.getPublished(article)}"""
 
     def sendArticles(self, update, context, news):
 
         for article in news:
             try:
-                self.enviar_mensaje(context.bot, update.effective_user.id, self.getMessage(article), parse_mode="Markdown")
-                sleep(2)
+                self.enviar_mensaje(context.bot, update.effective_user.id, self.getMessage(article))
+                sleep(2.5)         
+                break       
             except Exception as e:
+                print(e)
                 continue
