@@ -2,8 +2,8 @@ from base import BotTelegram
 from telegram import (InlineKeyboardButton, InlineKeyboardMarkup)
 from BaseNewsAPI import BaseNewsAPI
 from time import sleep
-import datetime
-import locale
+# import datetime
+# import locale
 
 
 
@@ -11,8 +11,7 @@ class BotTelegramNews(BotTelegram, BaseNewsAPI):
     def __init__(self, nombre, token, api_key):
         BotTelegram.__init__(self, nombre, token)
         BaseNewsAPI.__init__(self, api_key)
-
-        locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+        # locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
         self.case = {
             'business': 'negocios',
             'entertainment': 'entretenimiento',
@@ -55,9 +54,10 @@ class BotTelegramNews(BotTelegram, BaseNewsAPI):
         self.enviar_mensaje(context.bot, update.effective_user.id, f"Has seleccionado la categoría {self.case[query.data]}")
         news = self.getArticles(query.data)
         self.sendArticles(update, context, news)
-        self.enviar_mensaje(context.bot, update.effective_user.id,
-         (f"Pulsa un botón para ver más noticias 📰 de hoy {datetime.date.today().day}  de {datetime.date.today().strftime('%B')} de {datetime.date.today().year}."),
-           reply_markup=self.reply_markup)
+        self.enviar_mensaje(context.bot, update.effective_user.id, "¿Quieres ver más noticias? Pulsa un botón para comenzar", reply_markup=self.reply_markup)
+        # self.enviar_mensaje(context.bot, update.effective_user.id,
+        #  (f"Pulsa un botón para ver más noticias 📰 de hoy {datetime.date.today().day}  de {datetime.date.today().strftime('%B')} de {datetime.date.today().year}."),
+        #    reply_markup=self.reply_markup)
                 
         
     def getMessage(self, article):
@@ -68,8 +68,7 @@ class BotTelegramNews(BotTelegram, BaseNewsAPI):
         for article in news:
             try:
                 self.enviar_mensaje(context.bot, update.effective_user.id, self.getMessage(article))
-                sleep(2.5)         
-                break       
+                sleep(3)       
             except Exception as e:
                 print(e)
                 continue
