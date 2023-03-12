@@ -14,7 +14,7 @@ Este es un bot de Telegram que te mantiene al día con las últimas noticias. Es
 1. haz un fork de este repositorio y clona el repositorio en tu computadora.
 2. Crea un entorno virtual.
 ```bash
-python -m venv venv
+pip install virtualenv
 
 # Linux
 source virtualenv nombre_del_entorno
