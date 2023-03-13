@@ -49,8 +49,6 @@ class BotTelegramNews(BotTelegram, BaseNewsAPI):
     def getNewMessage(self, update, context) -> None:
         """Función que se ejecuta cuando el usuario presiona un botón en el chat de Telegram."""
         query = update.callback_query
-        query.answer()
-
         self.enviar_mensaje(context.bot, update.effective_user.id, f"Has seleccionado la categoría {self.case[query.data]}")
         news = self.getArticles(query.data)
         self.sendArticles(update, context, news)
