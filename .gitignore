@@ -2,3 +2,12 @@ api.py
 .env
 __pycache__/
 fly.toml
+BaseNewsAPI.py
+.gitignore
+database/general.json
+database/science.json
+database/sports.json
+database/entertainment.json
+database/business.json
+database/health.json
+database/technology.json
