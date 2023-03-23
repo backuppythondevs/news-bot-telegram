@@ -1,27 +1,19 @@
 import requests
 import json
 from datetime import datetime
-import schedule
-import time
-
 class BaseNewsAPI:
     def __init__(self, api_key):
         self.api_key = api_key
 
 
     def backupAPI(self):
-        # backup the news api for categories
         categories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology']
         for category in categories:
-            # get the news
             url = (f'https://newsapi.org/v2/top-headlines?country=mx&category={category}&apiKey={self.api_key}')
             response = requests.get(url)
             response_json = response.json()
-
-            # save the news in a json file for each category
             with open(f'database/{category}.json', 'w') as f:
                 json.dump(response_json.get('articles'), f)
-        # print('Backup done...')
 
     def getArticles(self, category):
         # read the json file for the category
