@@ -61,3 +61,18 @@ class BotTelegram:
             Tipo:: (fn)"""
         mensaje_recibido = MessageHandler(Filters.text & (~Filters.command), function)
         self.dispatcher.add_handler(mensaje_recibido)
+
+    def enviar_mensaje_canal(self, id_canal, mensaje, parse_mode=None, reply_markup=None):
+        """Función que envía un mensaje desde un bot y a un canal en particular.
+        Parámetros:
+            bot: objeto Bot de el módulo telegram.
+                Tipo: telegram.bot
+            id_canal: id de telegram del canal.
+                Tipo: (int)
+            text: mensaje a enviar.
+                Tipo: (str)
+            parse_mode: establece el modo de texto que se envía.
+                Tipo: (str)
+                Ejm: 'Markdown'; 'HTML'.
+            """
+        self.updater.bot.send_message(chat_id=id_canal, text=mensaje, parse_mode=parse_mode,reply_markup=reply_markup)

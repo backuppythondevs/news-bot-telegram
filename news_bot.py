@@ -1,24 +1,23 @@
 from base import BotTelegram
 from telegram import (InlineKeyboardButton, InlineKeyboardMarkup)
 from BaseNewsAPI import BaseNewsAPI
-from time import sleep
+from random import choice
 import datetime
 
 class BotTelegramNews(BotTelegram, BaseNewsAPI):
-    def __init__(self, nombre, token, api_key):
+    def __init__(self, nombre, token, api_key, channel_id):
         BotTelegram.__init__(self, nombre, token)
         BaseNewsAPI.__init__(self, api_key)
-        # set locale MX 
+
+        self.channel_id = channel_id
         self.meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
-        self.case = {
-            'business': 'negocios',
-            'entertainment': 'entretenimiento',
-            'general': 'general',
-            'health': 'salud',
-            'science': 'ciencia',
-            'sports': 'deportes',
+        self.case = { 
+            'business': 'negocios',  'entertainment': 'entretenimiento',
+            'general': 'general' ,  'health': 'salud',
+            'science': 'ciencia',  'sports': 'deportes', 
             'technology': 'tecnología'
         }
+    
         self.keyboard = [[
             InlineKeyboardButton("Negocios 💰", callback_data='business'),
              InlineKeyboardButton("Tecnología 🤖", callback_data='technology'),
@@ -26,8 +25,9 @@ class BotTelegramNews(BotTelegram, BaseNewsAPI):
             [InlineKeyboardButton("Salud ⚕", callback_data='health'),
              InlineKeyboardButton("Ciencia 🧪", callback_data='science'),
              InlineKeyboardButton("Deportes ⚽", callback_data='sports')],
-            [InlineKeyboardButton("Entretenimiento 🎬", callback_data='entertainment')]]
-
+            [InlineKeyboardButton("Entretenimiento 🎬", callback_data='entertainment')],
+            [InlineKeyboardButton("Canal de deportes 🏀🥊🏎️", url='https://t.me/noticias_sport_mx')]
+            ]
         self.reply_markup = InlineKeyboardMarkup(self.keyboard)
 
     def start(self, update, context) -> None:
@@ -47,15 +47,25 @@ class BotTelegramNews(BotTelegram, BaseNewsAPI):
     def getNewMessage(self, update, context) -> None:
         """Función que se ejecuta cuando el usuario presiona un botón en el chat de Telegram."""
         query = update.callback_query
+        
         self.enviar_mensaje(context.bot, update.effective_user.id, f"Has seleccionado la categoría {self.case[query.data]}")
         news = self.getArticles(query.data)
         try:
-            import random
-            article = random.choice(news)
+            article =choice(news)
             self.enviar_mensaje(context.bot, update.effective_user.id, self.getMessage(article))
+            self.enviar_mensaje(context.bot, update.effective_user.id, f"¿Quieres ver más noticias de la categoría {self.case[query.data]}?", 
+                                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Ver más noticias", callback_data=query.data)]]))
         except Exception as e:
             print(e)
-
+            self.enviar_mensaje(context.bot, update.effective_user.id, "No hay más noticias para mostrar 😔")
+        
     def getMessage(self, article):
         return f"""📰 {self.getTitle(article)}\n{self.getDescription(article)}\n{self.getUrl(article)}\n{self.getImage(article)}\n\n©️ Autor: {self.getAuthor(article)}\n📅 Fecha: {self.getPublished(article)}"""
 
+    def sendSportNews(self):
+        news = self.getArticles('sports')
+        try:
+            for article in news:
+                self.enviar_mensaje_canal(self.channel_id, self.getMessage(article))
+        except Exception as e:
+            print(e)
